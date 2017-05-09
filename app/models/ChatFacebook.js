@@ -5,7 +5,7 @@ const Respuesta = require("./Respuesta"),
       Categoria = require("./Categoria"),
       Servicio = require("./Servicio");
 
-const PAGE_ACCESS_TOKEN = 'EAACJrl8N3tEBAEOalynAsFZASukskMQrrFh3LLPvYXut4AE8Is3WIoz72VGHqZCtQZAKW2ZAuHGw2qwTLMqFliGA0gH76cU5aQZB0Db0gCNFf5nwrZA1zeZAOQtCcnuZCdCIozvmdRUtSSZArOGC2zzr0LnXBbKTMZBwzYJUUOTQPUwAZDZD';
+const PAGE_ACCESS_TOKEN = 'EAAUd0H7h3CUBACogbZAbIiywXEduy3HlNVJXbZB8h2ARHusUlSo4xGwngofGZCgEMLLJ0Ufeuz4UvzUykoOZBONphMIZCmwUJWqYRgvLsG8IL5EWDLIdYRv6UEsgUDDrnRZANBwGj8W6rbBCLNm2nLmwkEaBqBoQ5zoMRvcNSDJAZDZD';
 
 
 var conectarPaginaFacebook = function conectarPaginaFacebook(req, res) {
