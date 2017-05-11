@@ -39,7 +39,7 @@ var recibirChat = function recibirChat(req, res) {
       var timeOfEvent = entry.time;
 
       //Recorre todos los mensajes
-      entry.messaging.forEach(function(event) { console.log("=========================");console.log(event);
+      entry.messaging.forEach(function(event) {
         if(event.message){
           recibirMensaje(event);
         }else if(event.postback){
@@ -79,15 +79,25 @@ function recibirMensaje(event) {
           var elemento = respuesta.elemento;
           var contenido = respuesta.contenido;
           var detalle = respuesta.detalle;
+          var intento = respuesta.intento;
 
           switch(elemento){
             case "mensaje_texto":
               enviarMensajeTexto(senderID, contenido);
               break;
             case "respuestas_rapidas":
-              armaRespuestasRapidas(senderID, contenido, detalle, function(message){                
-                enviarRespuestasRapidas(senderID, message);
-              });
+              if(intento == 'Default Welcome Intent'){
+                greetUserText(senderID, function(user){                  
+                  contenido = contenido.replace('%USER%', user);
+                  armaRespuestasRapidas(senderID, contenido, detalle, function(message){
+                    enviarRespuestasRapidas(senderID, message);
+                  });
+                });          
+              }else{
+                armaRespuestasRapidas(senderID, contenido, detalle, function(message){
+                    enviarRespuestasRapidas(senderID, message);
+                });
+              }                   
               break;
             case "plantilla_generica":
               armaPlantillaGenerica(senderID, detalle, function(message){
@@ -406,4 +416,31 @@ function callSendAPI(messageData) {
       console.error(error);
     }
   });  
+}
+
+function greetUserText(userId, callback) {
+  //first read user firstname
+  request({
+    uri: 'https://graph.facebook.com/v2.7/' + userId,
+    qs: {
+      access_token: PAGE_ACCESS_TOKEN
+    }
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+
+      var user = JSON.parse(body);
+
+      if (user.first_name) {
+        console.log("FB user: %s %s, %s", user.first_name, user.last_name, user.gender);
+        callback(user.first_name);
+      } else {
+        console.log("No se puede obtener datos de fb con user", userId);
+      }
+      
+    } else {
+      console.error(response.error);
+    }
+
+  });
 }
