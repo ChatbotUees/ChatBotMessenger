@@ -135,15 +135,25 @@ function recibirPostback(event) {
           var elemento = respuesta.elemento;
           var contenido = respuesta.contenido;
           var detalle = respuesta.detalle;
+          var intento = respuesta.intento;
 
           switch(elemento){
             case "mensaje_texto":
               enviarMensajeTexto(senderID, contenido);
               break;
             case "respuestas_rapidas":
-              armaRespuestasRapidas(senderID, contenido, detalle, function(message){                
-                enviarRespuestasRapidas(senderID, message);
-              });
+              if(intento == 'Default Welcome Intent'){
+                greetUserText(senderID, function(user){                  
+                  contenido = contenido.replace('%USER%', user);
+                  armaRespuestasRapidas(senderID, contenido, detalle, function(message){
+                    enviarRespuestasRapidas(senderID, message);
+                  });
+                });          
+              }else{
+                armaRespuestasRapidas(senderID, contenido, detalle, function(message){
+                    enviarRespuestasRapidas(senderID, message);
+                });
+              } 
               break;
             case "plantilla_generica":
               armaPlantillaGenerica(senderID, detalle, function(message){
