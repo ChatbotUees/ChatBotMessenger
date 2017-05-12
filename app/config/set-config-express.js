@@ -17,9 +17,9 @@ var expressConfig = function(app){
   app.use('/node_modules', express.static(path.join(process.cwd() + '/node_modules')));
  
   //Verificamos que un request viene de la aplicacion correcta de facebook contrastando con FB_APP_SECRET
-  /*app.use(bodyParser.json({
+  app.use(bodyParser.json({
     verify: signature.verificaFirmaFacebook
-  }));*/
+  }));
 
   //For the verbs HTTP get params
   app.use(bodyParser.json());       // to support JSON-encoded bodies
