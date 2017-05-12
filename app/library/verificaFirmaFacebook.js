@@ -1,3 +1,6 @@
+const path = require('path');
+const app = require(path.join(process.cwd(), 'app'));
+
 var vericaFirma = module.exports.verificaFirma=function verificaRequestSignature(req, res, buf) {
 
 	//Extraemos la signature del request
@@ -11,9 +14,7 @@ var vericaFirma = module.exports.verificaFirma=function verificaRequestSignature
 		var metodo = elementos[0];
 		var signatureHash = elementos[1];
 
-		var esperadoHash = crypto.createHmac('sha1', config.FB_APP_SECRET)
-			.update(buf)
-			.digest('hex');
+		var esperadoHash = crypto.createHmac('sha1', app.get('settings').access.fb_app_secret).update(buf).digest('hex');
 
 		if (signatureHash != esperadoHash) {
 			throw new Error("No se puede validar firma del request");
