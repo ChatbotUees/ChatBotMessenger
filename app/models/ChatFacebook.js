@@ -7,14 +7,13 @@ const Respuesta = require("./Respuesta"),
 const path = require('path');
 const app = require(path.join(process.cwd(), 'app'));
 
-const PAGE_ACCESS_TOKEN = 'EAASoUKbFkdYBAFUPwdkYo8Rr3XZCWyZCQeZAePycIDctZAHvTT9sZB04JO8ZAT47sgpsvQ4QNoiFYJAyQEetn64ZAWlK0QJxTF9uZAsIOoghTVtWmHIOS0NwZAbu5ZBmXiPXJK4CgHg7lmDZBnIWDy54NlqY5eF6iCaPSORXGl3B1OZBZC5KrvfyJEiJU';
-const PAGE_ACCESS_TOKEN1 = app.get('settings').access.fb_page_token;
+const PAGE_ACCESS_TOKEN = app.get('settings').access.fb_page_token;
 const VERIFY_TOKEN = app.get('settings').access.fb_verify_token;
 
 var conectarPaginaFacebook = function conectarPaginaFacebook(req, res) {
     
   try {
-    if(req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === 'michatbothector081993'){
+    if(req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === VERIFY_TOKEN){
       console.log('Validacion correcta!');
       res.status(200).send(req.query['hub.challenge']);
     }else{
@@ -31,11 +30,6 @@ module.exports.conectarPaginaFacebook = conectarPaginaFacebook;
 
 
 var recibirChat = function recibirChat(req, res) {
-console.log("***********************************************************************");
-console.log(PAGE_ACCESS_TOKEN1);
-console.log("***********************************************************************");
-console.log(VERIFY_TOKEN);
-console.log("***********************************************************************");
   var data = req.body;
 
   if(data && data.object === 'page'){

@@ -1,8 +1,10 @@
+const path = require('path');
+const app = require(path.join(process.cwd(), 'app'));
 const apiai = require('apiai');
 
 var agenteApiAI = function agenteApiAI(messageText, senderID, callback){
 
-  var api = apiai("efdd236562b34121ae04a2c41c27ddea");
+  var api = apiai(app.get('settings').access.api_ai_client_access_token);
   var request = api.textRequest(messageText, { sessionId: senderID });
   var intent, speech;
 
