@@ -4,7 +4,7 @@ const agente = require("./Agente");
 const Respuesta = require("./Respuesta"),
       Categoria = require("./Categoria"),
       Servicio = require("./Servicio");
-const config = require('./config');
+const config = require('./app/config/config');
 
 const PAGE_ACCESS_TOKEN = 'EAASoUKbFkdYBAFUPwdkYo8Rr3XZCWyZCQeZAePycIDctZAHvTT9sZB04JO8ZAT47sgpsvQ4QNoiFYJAyQEetn64ZAWlK0QJxTF9uZAsIOoghTVtWmHIOS0NwZAbu5ZBmXiPXJK4CgHg7lmDZBnIWDy54NlqY5eF6iCaPSORXGl3B1OZBZC5KrvfyJEiJU';
 const PAGE_ACCESS_TOKEN1 = config.access.fb_page_token;
