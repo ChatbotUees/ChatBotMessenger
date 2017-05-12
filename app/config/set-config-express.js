@@ -4,7 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
-const signature = require('./app/library/verificaFirmaFacebook');
+const signature = require('../library/verificaFirmaFacebook');
  
 var expressConfig = function(app){
   
