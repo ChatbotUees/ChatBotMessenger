@@ -102,7 +102,7 @@ function recibirMensaje(event) {
               break;
             case "plantilla_generica":// Analizar este codigo
               if(intento == 'servicio-transporte'){
-                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti. \n Las opciones son:');
+                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti. \nLas opciones son:');
               }
               armaPlantillaGenerica(senderID, detalle, function(message){
                 enviarPlantillaGenerica(senderID, message);
