@@ -100,7 +100,10 @@ function recibirMensaje(event) {
                 });
               }                   
               break;
-            case "plantilla_generica":
+            case "plantilla_generica":// Analizar este codigo
+              if(intento == 'servicio-transporte'){
+                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti.');
+              }
               armaPlantillaGenerica(senderID, detalle, function(message){
                 enviarPlantillaGenerica(senderID, message);
               });              
@@ -157,6 +160,10 @@ function recibirPostback(event) {
               } 
               break;
             case "plantilla_generica":
+              // Analizar este codigo
+              if(intento == 'servicio-transporte'){
+                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti.');
+              }
               armaPlantillaGenerica(senderID, detalle, function(message){
                 enviarPlantillaGenerica(senderID, message);
               });              
