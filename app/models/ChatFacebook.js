@@ -70,56 +70,9 @@ function recibirMensaje(event) {
 
 
   if(messageText) {
-
-    agente.agenteApiAI(messageText, senderID, function(intent, speech) {
-
-      Respuesta.findOne({ intento: intent }).then((respuesta) => {
-        console.log(respuesta);
-        if(respuesta) {
-          
-          var elemento = respuesta.elemento;
-          var contenido = respuesta.contenido;
-          var detalle = respuesta.detalle;
-          var intento = respuesta.intento;
-
-          switch(elemento){
-            case "mensaje_texto":
-              enviarMensajeTexto(senderID, contenido);
-              break;
-            case "respuestas_rapidas":
-              if(intento == 'Default Welcome Intent'){
-                greetUserText(senderID, function(user){                  
-                  contenido = contenido.replace('%USER%', user);
-                  armaRespuestasRapidas(senderID, contenido, detalle, function(message){
-                    enviarRespuestasRapidas(senderID, message);
-                  });
-                });          
-              }else{
-                armaRespuestasRapidas(senderID, contenido, detalle, function(message){
-                    enviarRespuestasRapidas(senderID, message);
-                });
-              }                   
-              break;
-            case "plantilla_generica":// Analizar este codigo
-              if(intento == 'servicio-transporte'){
-                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti. \nLas opciones son:');
-              }
-              armaPlantillaGenerica(senderID, detalle, function(message){
-                enviarPlantillaGenerica(senderID, message);
-              });              
-              break;
-            default :
-              enviarMensajeTexto(senderID, "¿Cómo?");
-              break;
-          }
-        }else{
-          enviarMensajeTexto(senderID, speech);
-        }        
-                
-      });
-      
-    });
+    respuestasChat(messageText, senderID);
   }
+
 }
 
 function recibirPostback(event) {
@@ -128,154 +81,62 @@ function recibirPostback(event) {
   var timeOfPostback = event.timestamp;  
   var payload = event.postback.payload;
     
-  if(payload) {
+  if(payload) {      
+    respuestasChat(payload, senderID);
+  }
 
-    agente.agenteApiAI(payload, senderID, function(intent, speech) {
+}
 
-      Respuesta.findOne({ intento: intent }).then((respuesta) => {
-        console.log(respuesta);
-        if(respuesta) {
+function respuestasChat(message, senderID){
+
+  agente.agenteApiAI(message, senderID, function(intent, speech) {
+
+    Respuesta.find({ intento: intent }, function(err, respuesta) {
+      
+      console.log(respuesta);
+
+      
+        if(respuesta.length > 0) {
           
-          var elemento = respuesta.elemento;
-          var contenido = respuesta.contenido;
-          var detalle = respuesta.detalle;
-          var intento = respuesta.intento;
+          for (var i in respuesta) {  
+            var elemento = respuesta[i].elemento;
+            var contenido = respuesta[i].contenido;
+            var detalle = respuesta[i].detalle;
+            var intento = respuesta[i].intento;
 
-          switch(elemento){
-            case "mensaje_texto":
-              enviarMensajeTexto(senderID, contenido);
-              break;
-            case "respuestas_rapidas":
-              if(intento == 'Default Welcome Intent'){
-                greetUserText(senderID, function(user){                  
-                  contenido = contenido.replace('%USER%', user);
-                  armaRespuestasRapidas(senderID, contenido, detalle, function(message){
-                    enviarRespuestasRapidas(senderID, message);
-                  });
-                });          
-              }else{
-                armaRespuestasRapidas(senderID, contenido, detalle, function(message){
-                    enviarRespuestasRapidas(senderID, message);
-                });
-              } 
-              break;
-            case "plantilla_generica":
-              // Analizar este codigo
-              if(intento == 'servicio-transporte'){
-                enviarMensajeTexto(senderID, 'Te cuento que en el aeropuerto disponemos de transporte seguro para ti.');
-              }
-              armaPlantillaGenerica(senderID, detalle, function(message){
-                enviarPlantillaGenerica(senderID, message);
-              });              
-              break;
-            default :
-              enviarMensajeTexto(senderID, "¿Cómo?");
-              break;
+            switch(elemento){
+              case "mensaje_texto":
+                enviarMensajeTexto(senderID, contenido);
+                break;
+              case "respuestas_rapidas":
+                if(intento == 'Default Welcome Intent'){
+                  greetUserText(senderID, function(user){
+                    contenido = contenido.replace('%USER%', user);
+                    enviarRespuestasRapidas(senderID, contenido, detalle);
+                  });          
+                }else{
+                  enviarRespuestasRapidas(senderID, contenido, detalle);
+                }                   
+                break;
+              case "plantilla_generica":                
+                enviarPlantillaGenerica(senderID, detalle);
+                break;
+              default :
+                enviarMensajeTexto(senderID, "¿Cómo?");
+                break;
+            }
           }
+
         }else{
           enviarMensajeTexto(senderID, speech);
-        }        
-                
-      });
-      
-    });
+        }      
 
-  }
-}
-
-
-/*=======================================================================================================*/
-
-function armaRespuestasRapidas(recipientId, text, id, callback){
-  var result = '';
+    }).sort({ _id: -1 });
   
-  Categoria.find({id_categoria: id}).exec(function(err, doc){
-    
-    var data = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
-
-    for(var i in doc) {    
-      var item = doc[i];
-      var info = '{'+
-        '"content_type": "text", '+
-        '"title":"' + item.nombre + '", '+
-        '"payload":"' + item.nombre +'"'+
-      '},';
-      result = result + info;      
-    }
-
-    result = result.substr(0, (result.length - 1));
-    data = data.replace('%DATA%', result);
-
-    callback(JSON.parse(data));
   });
+
 }
 
-function armaPlantillaGenerica(recipientId, id, callback){
-  var result = '';
-  
-  Servicio.find({categoria: id}).exec(function(err, doc){        
-
-    var data = '{'+
-    '  "recipient":{'+
-    '    "id": "'+recipientId+'"'+
-    '  },'+
-    '  "message":{'+
-    '    "attachment":{'+
-    '      "type":"template",'+
-    '      "payload":{'+
-    '        "template_type": "generic",'+
-    '        "elements": [%DATA%]'+
-    '      }'+
-    '    }'+
-    '  }'+
-    '}';
-
-    for(var i in doc) {
-
-      var item = doc[i];
-      var info="";
-
-      if (item.url.length > 0){
-        info ='{'+
-          '  "title": "'+item.nombre+'",'+
-          '  "subtitle": "",'+
-          '  "item_url": "'+item.url+'",'+
-          '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+
-          '    "type": "web_url",'+
-          '    "url": "'+item.url+'",'+
-          '    "title": "Visitar Página"'+
-          '  }, {'+
-          '    "type": "postback",'+
-          '    "title": "Más Información",'+
-          '    "payload": "'+item.nombre+'"'+
-          '  }]'+
-          '},';
-      }else{        
-        info ='{'+
-          '  "title": "'+item.nombre+'",'+
-          '  "subtitle": "",'+
-          '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+          
-          '    "type": "postback",'+
-          '    "title": "Más Información",'+
-          '    "payload": "'+item.nombre+'"'+
-          '  }]'+
-          '},';
-      }      
-
-      result = result + info;
-
-    }
-
-    result = result.substr(0, (result.length - 1));
-    data = data.replace('%DATA%', result);
-
-    callback(JSON.parse(data));
-  });
-}
-
-/*=======================================================================================================*/
 
 
 ////////////////////////////////////////////// ELEMENTOS DE FACEBOOK ///////////////////////////////////////////////
@@ -405,16 +266,99 @@ function enviarPlantillaBoton(recipientId, messageText) {
   callSendAPI(messageData);
 }
 
-function enviarPlantillaGenerica(recipientId, messageData) {
-  callSendAPI(messageData);
-}
+function enviarPlantillaGenerica(recipientId, id){
+  var result = '';
+  
+  Servicio.find({categoria: id}).exec(function(err, doc){        
 
+    var messageData = '{'+
+    '  "recipient":{'+
+    '    "id": "'+recipientId+'"'+
+    '  },'+
+    '  "message":{'+
+    '    "attachment":{'+
+    '      "type":"template",'+
+    '      "payload":{'+
+    '        "template_type": "generic",'+
+    '        "elements": [%DATA%]'+
+    '      }'+
+    '    }'+
+    '  }'+
+    '}';
+
+    for(var i in doc) {
+
+      var item = doc[i];
+      var info="";
+
+      if (item.url.length > 0){
+        info ='{'+
+          '  "title": "'+item.nombre+'",'+
+          '  "subtitle": "",'+
+          '  "item_url": "'+item.url+'",'+
+          '  "image_url": "'+item.url_imagen+'",'+
+          '  "buttons": [{'+
+          '    "type": "web_url",'+
+          '    "url": "'+item.url+'",'+
+          '    "title": "Visitar Página"'+
+          '  }, {'+
+          '    "type": "postback",'+
+          '    "title": "Más Información",'+
+          '    "payload": "'+item.nombre+'"'+
+          '  }]'+
+          '},';
+      }else{        
+        info ='{'+
+          '  "title": "'+item.nombre+'",'+
+          '  "subtitle": "",'+
+          '  "image_url": "'+item.url_imagen+'",'+
+          '  "buttons": [{'+          
+          '    "type": "postback",'+
+          '    "title": "Más Información",'+
+          '    "payload": "'+item.nombre+'"'+
+          '  }]'+
+          '},';
+      }      
+
+      result = result + info;
+
+    }
+
+    result = result.substr(0, (result.length - 1));
+    messageData = messageData.replace('%DATA%', result);
+    
+    callSendAPI(JSON.parse(messageData));
+  });
+}
 
 /******************************** Respuestas Rapidas ********************************/
-function enviarRespuestasRapidas(recipientId, message) {
-  callSendAPI(message);
-}
+function enviarRespuestasRapidas(recipientId, text, id){
+  var result = '';
+  
+  Categoria.find({id_categoria: id}).exec(function(err, doc){
+    
+    var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
 
+    for(var i in doc) {    
+      var item = doc[i];
+      var info = '{'+
+        '"content_type": "text", '+
+        '"title":"' + item.nombre + '", '+
+        '"payload":"' + item.nombre +'"'+
+      '},';
+      result = result + info;      
+    }
+
+    result = result.substr(0, (result.length - 1));
+    messageData = messageData.replace('%DATA%', result);
+    
+    callSendAPI(JSON.parse(messageData));
+
+  });
+}
+/**************************************************************************************/
+
+/********************************** API de Envio *************************************/
 function callSendAPI(messageData) {
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
@@ -427,17 +371,18 @@ function callSendAPI(messageData) {
       var recipientId = body.recipient_id;
       var messageId = body.message_id;
 
-      console.log("Successfully sent generic message with id %s to recipient %s", messageId, recipientId);
+      console.log("Mensaje enviado exitosamente al Id User: %s al Id Pagina: %s", messageId, recipientId);
     } else {
-      console.error("Unable to send message.");
+      console.error("Error al enviar el mensaje");
       console.error(response);
       console.error(error);
     }
   });  
 }
+/**************************************************************************************/
 
 function greetUserText(userId, callback) {
-  //first read user firstname
+  
   request({
     uri: 'https://graph.facebook.com/v2.7/' + userId,
     qs: {
