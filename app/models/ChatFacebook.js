@@ -112,7 +112,7 @@ function respuestasChat(message, senderID){
                 if(intento == 'Default Welcome Intent'){
                   greetUserText(senderID, function(user){
                     contenido = contenido.replace('%USER%', user);
-                    enviarRespuestasRapidas(senderID, contenido, detalle);
+                    enviarRespuestasRapidas(senderID, contenido, detalle, intento);
                   });          
                 }else{
                   enviarRespuestasRapidas(senderID, contenido, detalle, intento);
