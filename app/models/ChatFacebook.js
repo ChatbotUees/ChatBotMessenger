@@ -123,9 +123,9 @@ function respuestasChat(message, senderID){
                 break;
               case "imagen": 
                 console.log("*************************************************");               
-                console.log(detalle);
+                console.log(contenido);
                 console.log("*************************************************");               
-                enviarImagen(senderID, detalle);
+                enviarImagen(senderID, contenido);
                 break;
               default :
                 enviarMensajeTexto(senderID, "¿Cómo?");
