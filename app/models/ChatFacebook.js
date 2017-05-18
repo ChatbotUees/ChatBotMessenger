@@ -342,25 +342,23 @@ function enviarRespuestasRapidas(recipientId, text, id, intento){
   var result = '';
   
   if (intento == "despedida"){
-
+console.log("***** entrre *********");
     var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
    
-        var info = '{'+
+        result = '{'+
           '"content_type": "text", '+
           '"title":"Si", '+
           '"payload":"Si"'+
-        '},';
-        result = result + info;  
-        info = '{'+
+        '},{'+
           '"content_type": "text", '+
           '"title":"No", '+
           '"payload":"No"'+
-        '},';    
-       result = result + info; 
+        '}';    
+       //result = info; 
 
-      result = result.substr(0, (result.length - 1));
+     // result = result.substr(0, (result.length - 1));
       messageData = messageData.replace('%DATA%', result);
-
+console.log(messageData);
   }else{
     Categoria.find({id_categoria: id}).exec(function(err, doc){
     
