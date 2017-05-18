@@ -129,6 +129,9 @@ function respuestasChat(message, senderID){
               console.log(contenido);          
                 enviarVideo(senderID, contenido);
                 break;
+              case "lista_botones":          
+                enviarPlantillaBoton(senderID, contenido);
+                break;
               default :
                 enviarMensajeTexto(senderID, "¿Cómo?");
                 break;
@@ -256,14 +259,14 @@ function enviarPlantillaBoton(recipientId, messageText) {
           text:"What do you want to do next?",
           buttons:[
             {
-              type:"web_url",
-              url:"https://petersapparel.parseapp.com",
-              title:"Show Website"
+              type:"postback",
+              title:"Trámite Galápagos ",
+              payload:"Trámite Galápagos "
             },
             {
               type:"postback",
-              title:"Start Chatting",
-              payload:"USER_DEFINED_PAYLOAD"
+              title:"Pérdida de equipaje",
+              payload:"Pérdida de equipaje"
             }
           ]
         }
