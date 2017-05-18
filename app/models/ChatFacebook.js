@@ -124,7 +124,9 @@ function respuestasChat(message, senderID){
               case "imagen":              
                 enviarImagen(senderID, contenido);
                 break;
-              case "video":            
+              case "video":
+              console.log("********************************************");          
+              console.log(contenido);          
                 enviarVideo(senderID, contenido);
                 break;
               default :
