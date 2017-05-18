@@ -358,6 +358,7 @@ console.log("***** entrre *********");
 
      // result = result.substr(0, (result.length - 1));
       messageData = messageData.replace('%DATA%', result);
+      callSendAPI(JSON.parse(messageData));
 console.log(messageData);
   }else{
     Categoria.find({id_categoria: id}).exec(function(err, doc){
@@ -377,13 +378,13 @@ console.log(messageData);
       result = result.substr(0, (result.length - 1));
       messageData = messageData.replace('%DATA%', result);
       
-      
+      callSendAPI(JSON.parse(messageData));
 
     });
 
   }
 
-  callSendAPI(JSON.parse(messageData));
+  
   
 }
 /**************************************************************************************/
