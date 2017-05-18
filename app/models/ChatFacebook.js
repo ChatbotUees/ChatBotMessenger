@@ -121,6 +121,9 @@ function respuestasChat(message, senderID){
               case "plantilla_generica":                
                 enviarPlantillaGenerica(senderID, detalle);
                 break;
+              case "imagen":                
+                enviarImagen(senderID, detalle);
+                break;
               default :
                 enviarMensajeTexto(senderID, "¿Cómo?");
                 break;
