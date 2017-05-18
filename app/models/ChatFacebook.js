@@ -115,7 +115,7 @@ function respuestasChat(message, senderID){
                     enviarRespuestasRapidas(senderID, contenido, detalle);
                   });          
                 }else{
-                  enviarRespuestasRapidas(senderID, contenido, detalle);
+                  enviarRespuestasRapidas(senderID, contenido, detalle, intento);
                 }                   
                 break;
               case "plantilla_generica":                
@@ -338,29 +338,55 @@ function enviarPlantillaGenerica(recipientId, id){
 }
 
 /******************************** Respuestas Rapidas ********************************/
-function enviarRespuestasRapidas(recipientId, text, id){
+function enviarRespuestasRapidas(recipientId, text, id, intento){
   var result = '';
   
-  Categoria.find({id_categoria: id}).exec(function(err, doc){
-    
+  if (intento == "despedida"){
+
     var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
+   
+        var info = '{'+
+          '"content_type": "text", '+
+          '"title":"Si", '+
+          '"payload":"Si"'+
+        '},';
+        result = result + info;  
+        info = '{'+
+          '"content_type": "text", '+
+          '"title":"No", '+
+          '"payload":"No"'+
+        '},';    
+       result = result + info; 
 
-    for(var i in doc) {    
-      var item = doc[i];
-      var info = '{'+
-        '"content_type": "text", '+
-        '"title":"' + item.nombre + '", '+
-        '"payload":"' + item.nombre +'"'+
-      '},';
-      result = result + info;      
-    }
+      result = result.substr(0, (result.length - 1));
+      messageData = messageData.replace('%DATA%', result);
 
-    result = result.substr(0, (result.length - 1));
-    messageData = messageData.replace('%DATA%', result);
+  }else{
+    Categoria.find({id_categoria: id}).exec(function(err, doc){
     
-    callSendAPI(JSON.parse(messageData));
+      var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
 
-  });
+      for(var i in doc) {    
+        var item = doc[i];
+        var info = '{'+
+          '"content_type": "text", '+
+          '"title":"' + item.nombre + '", '+
+          '"payload":"' + item.nombre +'"'+
+        '},';
+        result = result + info;      
+      }
+
+      result = result.substr(0, (result.length - 1));
+      messageData = messageData.replace('%DATA%', result);
+      
+      
+
+    });
+
+  }
+
+  callSendAPI(JSON.parse(messageData));
+  
 }
 /**************************************************************************************/
 
