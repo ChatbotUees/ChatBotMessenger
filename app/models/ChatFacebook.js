@@ -348,7 +348,7 @@ console.log("***** entrre *********");
         result = '{'+
           '"content_type": "text", '+
           '"title":"Si", '+
-          '"payload":"Si"'+
+          '"payload":"si-servicios"'+
         '},{'+
           '"content_type": "text", '+
           '"title":"No", '+
