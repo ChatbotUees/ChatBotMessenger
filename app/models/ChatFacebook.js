@@ -256,7 +256,7 @@ function enviarPlantillaBoton(recipientId, messageText) {
         type:"template",
         payload:{
           template_type:"button",
-          text:"",
+          text:"Elige una de las opciones:",
           buttons:[
             {
               type:"postback",
