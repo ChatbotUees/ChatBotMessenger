@@ -231,7 +231,7 @@ function enviarVideo(recipientId, urlVideo) {
       attachment:{
         type:"video",
         payload:{
-          url:urlVideo//"https://petersapparel.com/bin/clip.mp4"
+          url:"https://petersapparel.com/bin/clip.mp4"//"https://petersapparel.com/bin/clip.mp4"
         }
       }
     }
