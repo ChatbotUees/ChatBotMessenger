@@ -121,7 +121,10 @@ function respuestasChat(message, senderID){
               case "plantilla_generica":                
                 enviarPlantillaGenerica(senderID, detalle);
                 break;
-              case "imagen":                
+              case "imagen": 
+                console.log("*************************************************");               
+                console.log(detalle);
+                console.log("*************************************************");               
                 enviarImagen(senderID, detalle);
                 break;
               default :
