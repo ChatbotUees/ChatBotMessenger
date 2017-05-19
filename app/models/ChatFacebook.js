@@ -94,48 +94,55 @@ function respuestasChat(message, senderID){
     Respuesta.find({ intento: intent }, function(err, respuesta) {
       
       console.log(respuesta);
-
       
         if(respuesta.length > 0) {
           
-          for (var i in respuesta) {  
-            var elemento = respuesta[i].elemento;
-            var contenido = respuesta[i].contenido;
-            var detalle = respuesta[i].detalle;
-            var intento = respuesta[i].intento;
+          for (var i in respuesta) {          
 
-            switch(elemento){
-              case "mensaje_texto":
-                enviarMensajeTexto(senderID, contenido);
-                break;
-              case "respuestas_rapidas":
-                if(intento == 'Default Welcome Intent'){
-                  greetUserText(senderID, function(user){
-                    contenido = contenido.replace('%USER%', user);
+              var elemento = respuesta[i].elemento;
+              var contenido = respuesta[i].contenido;
+              var detalle = respuesta[i].detalle;
+              var intento = respuesta[i].intento;
+
+              switch(elemento){
+                case "mensaje_texto":
+                  enviarMensajeTexto(senderID, contenido);                  
+                  break;
+                case "audio":
+                  enviarAudio(senderID, contenido);                  
+                  break;
+                case "archivo":
+                  enviarArchivo(senderID, contenido);                  
+                  break;
+                case "imagen":
+                  enviarImagen(senderID, contenido);                  
+                  break;
+                case "video":
+                  enviarVideo(senderID, contenido);                  
+                  break;
+                case "plantilla_boton":
+                  enviarPlantillaBoton(senderID, contenido, detalle);                  
+                  break;
+                case "plantilla_generica":
+                  enviarPlantillaGenerica(senderID, detalle);                  
+                  break;
+                case "respuestas_rapidas":
+                  if(intento == 'Default Welcome Intent'){
+                    greetUserText(senderID, function(user){
+                      contenido = contenido.replace('%USER%', user);
+                      enviarRespuestasRapidas(senderID, contenido, detalle, intento);
+                    });
+                  }else{
                     enviarRespuestasRapidas(senderID, contenido, detalle, intento);
-                  });          
-                }else{
-                  enviarRespuestasRapidas(senderID, contenido, detalle, intento);
-                }                   
-                break;
-              case "plantilla_generica":                
-                enviarPlantillaGenerica(senderID, detalle);
-                break;
-              case "imagen":              
-                enviarImagen(senderID, contenido);
-                break;
-              case "video":
-              console.log("********************************************");          
-              console.log(contenido);          
-                enviarVideo(senderID, contenido);
-                break;
-              case "lista_botones":          
-                enviarPlantillaBoton(senderID, contenido);
-                break;
-              default :
-                enviarMensajeTexto(senderID, "¿Cómo?");
-                break;
-            }
+                  }                  
+                  break;
+                default :
+                  enviarMensajeTexto(senderID, "¿Cómo?");                  
+                  break;
+              }
+
+              sleep(2000);
+
           }
 
         }else{
@@ -245,39 +252,49 @@ function enviarVideo(recipientId, urlVideo) {
 
 /******************************** Plantillas ********************************/
 
-function enviarPlantillaBoton(recipientId, messageText) {
+function enviarPlantillaBoton(recipientId, text, id) {
 
-  var messageData = {
-    recipient:{
-      id: recipientId
-    },
-    message:{
-      attachment:{
-        type:"template",
-        payload:{
-          template_type:"button",
-          text:"Elige una de las opciones:",
-          buttons:[
-            {
-              type:"postback",
-              title:"Trámite Galápagos ",
-              payload:"Trámite Galápagos "
-            },
-            {
-              type:"postback",
-              title:"Pérdida de equipaje",
-              payload:"Pérdida de equipaje"
-            }
-          ]
-        }
-      }
+  var result = '';
+
+  Categoria.find({id_categoria: id}).exec(function(err, doc){
+    
+    var messageData = '{'+
+      '"recipient":{'+
+        '"id": "'+recipientId+'"'+
+      '},'+
+      '"message":{'+
+        '"attachment":{'+
+          '"type": "template",'+
+          '"payload":{'+
+            '"template_type":"button",'+
+            '"text":"'+text+'",'+
+            '"buttons":[%DATA%]'+
+          '}'+
+        '}'+
+      '}'+
+    '}';
+
+    for(var i in doc) {    
+      var item = doc[i];
+      var info = '{'+
+        '"type": "postback", '+
+        '"title":"' + item.nombre + '", '+
+        '"payload":"' + item.nombre +'"'+
+      '},';
+      result = result + info;      
     }
-  };
 
-  callSendAPI(messageData);
+    result = result.substr(0, (result.length - 1));
+    messageData = messageData.replace('%DATA%', result);
+    
+    callSendAPI(JSON.parse(messageData));
+
+  });
+  
 }
 
 function enviarPlantillaGenerica(recipientId, id){
+  
   var result = '';
   
   Servicio.find({categoria: id}).exec(function(err, doc){        
@@ -339,7 +356,9 @@ function enviarPlantillaGenerica(recipientId, id){
     messageData = messageData.replace('%DATA%', result);
     
     callSendAPI(JSON.parse(messageData));
+
   });
+
 }
 
 /******************************** Respuestas Rapidas ********************************/
@@ -347,25 +366,25 @@ function enviarRespuestasRapidas(recipientId, text, id, intento){
   var result = '';
   
   if (intento == "despedida"){
-console.log("***** entrre *********");
+
     var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
    
-        result = '{'+
-          '"content_type": "text", '+
-          '"title":"Si", '+
-          '"payload":"si-servicios"'+
-        '},{'+
-          '"content_type": "text", '+
-          '"title":"No", '+
-          '"payload":"no-servicios"'+
-        '}';    
-       //result = info; 
+    result = '{'+
+      '"content_type": "text", '+
+      '"title":"Si", '+
+      '"payload":"si-servicios"'+
+    '},{'+
+      '"content_type": "text", '+
+      '"title":"No", '+
+      '"payload":"no-servicios"'+
+    '}';
 
-     // result = result.substr(0, (result.length - 1));
       messageData = messageData.replace('%DATA%', result);
+      
       callSendAPI(JSON.parse(messageData));
-console.log(messageData);
+      
   }else{
+
     Categoria.find({id_categoria: id}).exec(function(err, doc){
     
       var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
@@ -389,13 +408,12 @@ console.log(messageData);
 
   }
 
-  
-  
 }
 /**************************************************************************************/
 
 /********************************** API de Envio *************************************/
 function callSendAPI(messageData) {
+  
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: PAGE_ACCESS_TOKEN },
@@ -407,13 +425,14 @@ function callSendAPI(messageData) {
       var recipientId = body.recipient_id;
       var messageId = body.message_id;
 
-      console.log("Mensaje enviado exitosamente al Id User: %s al Id Pagina: %s", messageId, recipientId);
+      console.log("Mensaje enviado exitosamente con Id: %s al Id Pagina: %s", messageId, recipientId);
     } else {
       console.error("Error al enviar el mensaje");
       console.error(response);
       console.error(error);
     }
   });  
+  
 }
 /**************************************************************************************/
 
@@ -442,4 +461,13 @@ function greetUserText(userId, callback) {
     }
 
   });
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
 }
