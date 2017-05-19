@@ -99,6 +99,8 @@ function respuestasChat(message, senderID){
           
           for (var i in respuesta) {          
 
+              sleep(3000); 
+              
               var elemento = respuesta[i].elemento;
               var contenido = respuesta[i].contenido;
               var detalle = respuesta[i].detalle;
@@ -432,8 +434,6 @@ function callSendAPI(messageData) {
       console.error(error);
     }
   }); 
-
-  sleep(3000); 
   
 }
 /**************************************************************************************/
