@@ -149,7 +149,7 @@ function respuestasChat(message, senderID){
           enviarMensajeTexto(senderID, speech);
         }      
 
-    }).sort({ _id: 1 });
+    }).sort({ _id: -1 });
   
   });
 
@@ -431,7 +431,9 @@ function callSendAPI(messageData) {
       console.error(response);
       console.error(error);
     }
-  });  
+  }); 
+
+  sleep(2000); 
   
 }
 /**************************************************************************************/
