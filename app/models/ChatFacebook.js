@@ -141,7 +141,7 @@ function respuestasChat(message, senderID){
                   break;
               }
 
-              sleep(2000);
+              //sleep(2000);
 
           }
 
