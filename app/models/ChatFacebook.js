@@ -105,10 +105,11 @@ function respuestasChat(message, senderID){
               var contenido = respuesta[i].contenido;
               var detalle = respuesta[i].detalle;
               var intento = respuesta[i].intento;
+              var setTimeout = respuesta[i].setTimeout;
 
               switch(elemento){
                 case "mensaje_texto":
-                  enviarMensajeTexto(senderID, contenido);                  
+                  enviarMensajeTexto(senderID, contenido, setTimeout);                  
                   break;
                 case "audio":
                   enviarAudio(senderID, contenido);                  
@@ -162,18 +163,21 @@ function respuestasChat(message, senderID){
 ////////////////////////////////////////////// ELEMENTOS DE FACEBOOK ///////////////////////////////////////////////
 
 /******************************** Tipos de Contenidos ********************************/
-function enviarMensajeTexto(recipientId, messageText) {
+function enviarMensajeTexto(recipientId, messageText, setTimeout) {
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      text: messageText
-    }
-  };
+  setTimeout(function(){
+    var messageData = {
+      recipient: {
+        id: recipientId
+      },
+      message: {
+        text: messageText
+      }
+    };
 
-  callSendAPI(messageData);
+    callSendAPI(messageData);  
+  }, setTimeout);
+  
 }
 
 function enviarAudio(recipientId, urlAudio) {
