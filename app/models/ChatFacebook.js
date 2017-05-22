@@ -99,7 +99,7 @@ function respuestasChat(message, senderID){
           
           for (var i in respuesta) {          
 
-              sleep(3000); 
+              //sleep(3000); 
               
               var elemento = respuesta[i].elemento;
               var contenido = respuesta[i].contenido;
