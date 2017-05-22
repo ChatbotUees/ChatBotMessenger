@@ -234,9 +234,10 @@ function enviarImagen(recipientId, urlImage, setTime) {
         }
       }
     };
+    console.log("URL %s con time %s", urlImage, setTime);
+    callSendAPI(messageData);
   }, setTime);
-  console.log("URL %s con time %s", urlImage, setTime);
-  callSendAPI(messageData);
+
 }
 
 function enviarVideo(recipientId, urlVideo) {
