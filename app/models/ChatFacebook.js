@@ -118,7 +118,7 @@ function respuestasChat(message, senderID){
                   enviarArchivo(senderID, contenido);                  
                   break;
                 case "imagen":
-                  enviarImagen(senderID, contenido);                  
+                  enviarImagen(senderID, contenido, setTime);                  
                   break;
                 case "video":
                   enviarVideo(senderID, contenido);                  
@@ -218,22 +218,24 @@ function enviarArchivo(recipientId, urlFile) {
   callSendAPI(messageData);
 }
 
-function enviarImagen(recipientId, urlImage) {
+function enviarImagen(recipientId, urlImage, setTime) {
 
-  var messageData = {
-    recipient:{
-      id: recipientId
-    },
-    message:{
-      attachment:{
-        type:"image",
-        payload:{
-          url: urlImage //"https://petersapparel.com/img/shirt.png"
+  setTimeout(function(){
+    var messageData = {
+      recipient:{
+        id: recipientId
+      },
+      message:{
+        attachment:{
+          type:"image",
+          payload:{
+            url: urlImage //"https://petersapparel.com/img/shirt.png"
+          }
         }
       }
-    }
-  };
-
+    };
+  }, setTime);
+  console.log("URL %s con time %s", urlImage, setTime);
   callSendAPI(messageData);
 }
 
