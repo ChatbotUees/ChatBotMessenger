@@ -133,11 +133,11 @@ function respuestasChat(message, senderID){
                   if(intento == 'Default Welcome Intent'){
                     greetUserText(senderID, function(user){
                       contenido = contenido.replace('%USER%', user);
-                      enviarRespuestasRapidas(senderID, contenido, detalle, intento);
+                      enviarRespuestasRapidas(senderID, contenido, detalle, intento, setTime);
                     });
                   }else{
-                    enviarRespuestasRapidas(senderID, contenido, detalle, intento);
-                  }                  
+                    enviarRespuestasRapidas(senderID, contenido, detalle, intento, setTime);
+                  }
                   break;
                 default :
                   enviarMensajeTexto(senderID, "¿Cómo?");                  
@@ -371,51 +371,56 @@ function enviarPlantillaGenerica(recipientId, id){
 }
 
 /******************************** Respuestas Rapidas ********************************/
-function enviarRespuestasRapidas(recipientId, text, id, intento){
-  var result = '';
+function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
   
-  if (intento == "despedida"){
+  setTimeout(function(){
 
-    var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
-   
-    result = '{'+
-      '"content_type": "text", '+
-      '"title":"Si", '+
-      '"payload":"si-servicios"'+
-    '},{'+
-      '"content_type": "text", '+
-      '"title":"No", '+
-      '"payload":"no-servicios"'+
-    '}';
-
-      messageData = messageData.replace('%DATA%', result);
-      
-      callSendAPI(JSON.parse(messageData));
-      
-  }else{
-
-    Categoria.find({id_categoria: id}).exec(function(err, doc){
+    var result = '';
     
+    if (intento == "despedida"){
+
       var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
+     
+      result = '{'+
+        '"content_type": "text", '+
+        '"title":"Si", '+
+        '"payload":"si-servicios"'+
+      '},{'+
+        '"content_type": "text", '+
+        '"title":"No", '+
+        '"payload":"no-servicios"'+
+      '}';
 
-      for(var i in doc) {    
-        var item = doc[i];
-        var info = '{'+
-          '"content_type": "text", '+
-          '"title":"' + item.nombre + '", '+
-          '"payload":"' + item.nombre +'"'+
-        '},';
-        result = result + info;      
-      }
+        messageData = messageData.replace('%DATA%', result);
+        
+        callSendAPI(JSON.parse(messageData));
+        
+    }else{
 
-      result = result.substr(0, (result.length - 1));
-      messageData = messageData.replace('%DATA%', result);
+      Categoria.find({id_categoria: id}).exec(function(err, doc){
       
-      callSendAPI(JSON.parse(messageData));
+        var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
 
-    });
+        for(var i in doc) {    
+          var item = doc[i];
+          var info = '{'+
+            '"content_type": "text", '+
+            '"title":"' + item.nombre + '", '+
+            '"payload":"' + item.nombre +'"'+
+          '},';
+          result = result + info;      
+        }
 
-  }
+        result = result.substr(0, (result.length - 1));
+        messageData = messageData.replace('%DATA%', result);
+        
+        callSendAPI(JSON.parse(messageData));
+
+      });
+
+    }
+
+  }, setTime);
 
 }
 /**************************************************************************************/
