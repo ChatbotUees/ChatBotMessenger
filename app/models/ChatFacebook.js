@@ -485,7 +485,7 @@ function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
         
         callSendAPI(JSON.parse(messageData));
 
-      });
+      }).sort({ orden: -1 });
 
     }
 
