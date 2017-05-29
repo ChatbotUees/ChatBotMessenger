@@ -466,7 +466,8 @@ function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
         
     }else{
 
-      Categoria.find({id_categoria: id}).exec(function(err, doc){
+      //Categoria.find({id_categoria: id}).exec(function(err, doc){
+      Categoria.find({id_categoria: id}, function(err, doc) {
       
         var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
 
