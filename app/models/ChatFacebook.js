@@ -302,7 +302,7 @@ function enviarPlantillaBoton(recipientId, text, id) {
   
 }
 
-/*function enviarPlantillaGenerica(recipientId, id){
+function enviarPlantillaGenerica(recipientId, id){
   
   var result = '';
   console.log("-------------->%s",id);
@@ -369,8 +369,8 @@ function enviarPlantillaBoton(recipientId, text, id) {
 
   });
 
-}*/
-function enviarPlantillaGenerica(recipientId, id){
+}
+/*function enviarPlantillaGenerica(recipientId, id){
   
   var result = '';
   console.log("-------------->%s",id);
@@ -437,7 +437,7 @@ function enviarPlantillaGenerica(recipientId, id){
 
   });
 
-}
+}*/
 
 /******************************** Respuestas Rapidas ********************************/
 function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
