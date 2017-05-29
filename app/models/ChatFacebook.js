@@ -306,6 +306,7 @@ function enviarPlantillaGenerica(recipientId, id){
   
   var result = '';
   console.log("-------------->%s",id);
+  console.log("-------------->");
   Servicio.find({categoria: id}).exec(function(err, doc){        
 
     var messageData = '{'+
