@@ -302,7 +302,7 @@ function enviarPlantillaBoton(recipientId, text, id) {
   
 }
 
-function enviarPlantillaGenerica(recipientId, id){
+/*function enviarPlantillaGenerica(recipientId, id){
   
   var result = '';
   console.log("-------------->%s",id);
@@ -343,6 +343,74 @@ function enviarPlantillaGenerica(recipientId, id){
           '    "type": "postback",'+
           '    "title": "Más Información",'+
           '    "payload": "'+item.nombre+'"'+
+          '  }]'+
+          '},';
+      }else{        
+        info ='{'+
+          '  "title": "'+item.nombre+'",'+
+          '  "subtitle": "",'+
+          '  "image_url": "'+item.url_imagen+'",'+
+          '  "buttons": [{'+          
+          '    "type": "postback",'+
+          '    "title": "Más Información",'+
+          '    "payload": "'+item.nombre+'"'+
+          '  }]'+
+          '},';
+      }      
+
+      result = result + info;
+
+    }
+
+    result = result.substr(0, (result.length - 1));
+    messageData = messageData.replace('%DATA%', result);
+    
+    callSendAPI(JSON.parse(messageData));
+
+  });
+
+}*/
+function enviarPlantillaGenerica(recipientId, id){
+  
+  var result = '';
+  console.log("-------------->%s",id);
+  console.log("-------------->");
+  Servicio.find({categoria: id}).exec(function(err, doc){        
+
+    var messageData = '{'+
+    '  "recipient":{'+
+    '    "id": "'+recipientId+'"'+
+    '  },'+
+    '  "message":{'+
+    '    "attachment":{'+
+    '      "type":"template",'+
+    '      "payload":{'+
+    '        "template_type": "generic",'+
+    '        "elements": [%DATA%]'+
+    '      }'+
+    '    }'+
+    '  }'+
+    '}';
+
+    for(var i in doc) {
+
+      var item = doc[i];
+      var info="";
+
+      if (item.url.length > 0){
+        info ='{'+
+          '  "title": "'+item.nombre+'",'+
+          '  "subtitle": "",'+
+          '  "item_url": "'+item.url+'",'+
+          '  "image_url": "'+item.url_imagen+'",'+
+          '  "buttons": [{'+
+          '    "type": "web_url",'+
+          '    "url": "'+item.url+'",'+
+          '    "title": "Visitar Página"'+
+          '  }, {'+
+          '    "type": "phone_number",'+
+          '    "title": "LLamar",'+
+          '    "payload": "+593980866638"'+
           '  }]'+
           '},';
       }else{        
