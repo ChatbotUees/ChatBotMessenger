@@ -410,7 +410,7 @@ function enviarPlantillaGenerica(recipientId, id){
           '  }, {'+
           '    "type": "phone_number",'+
           '    "title": "LLamar",'+
-          '    "payload": "+59342169209"'+
+          '    "payload": "+59342169000"'+
           '  }]'+
           '},';
       }else{        
