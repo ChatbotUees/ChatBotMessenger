@@ -11,7 +11,8 @@ let ServicioSchema = new Schema({
     descripcion: String,
     estatus: String,
     url_imagen: String,
-    url: String
+    url: String,
+    telefono: String
 });
 
 module.exports = mongoose.model('Servicio', ServicioSchema);
