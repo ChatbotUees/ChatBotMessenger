@@ -98,8 +98,6 @@ function respuestasChat(message, senderID){
         if(respuesta.length > 0) {
           
           for (var i in respuesta) {          
-
-              //sleep(3000); 
               
               var elemento = respuesta[i].elemento;
               var contenido = respuesta[i].contenido;
@@ -142,9 +140,7 @@ function respuestasChat(message, senderID){
                 default :
                   enviarMensajeTexto(senderID, "¿Cómo?");                  
                   break;
-              }
-
-              //sleep(2000);
+              }            
 
           }
 
@@ -250,7 +246,7 @@ function enviarVideo(recipientId, urlVideo) {
       attachment:{
         type:"video",
         payload:{
-          url: urlVideo//"https://petersapparel.com/bin/clip.mp4"
+          url: "https://protected-basin-82070.herokuapp.com/public/assets/allofus480.mov"//"https://petersapparel.com/bin/clip.mp4"
         }
       }
     }
@@ -305,8 +301,7 @@ function enviarPlantillaBoton(recipientId, text, id) {
 function enviarPlantillaGenerica(recipientId, id){
   
   var result = '';
-  console.log("-------------->%s",id);
-  console.log("-------------->");
+  
   Servicio.find({categoria: id}).exec(function(err, doc){        
 
     var messageData = '{'+
@@ -329,34 +324,42 @@ function enviarPlantillaGenerica(recipientId, id){
       var item = doc[i];
       var info="";
 
-      if (item.url.length > 0){
-        info ='{'+
+      info ='{'+
           '  "title": "'+item.nombre+'",'+
           '  "subtitle": "",'+
-          '  "item_url": "'+item.url+'",'+
           '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+
+          '  "buttons": [';
+
+      if (item.url.length > 0){
+        info = info +          
+          '  {'+
           '    "type": "web_url",'+
           '    "url": "'+item.url+'",'+
           '    "title": "Visitar Página"'+
-          '  }, {'+
+          '  },';
+      }
+
+      if (item.telefono.length > 0){
+        info = info +
+          '  {'+          
+          '    "type": "phone_number",'+
+          '    "title": "Contactar",'+
+          '    "payload": "'+item.telefono+'"'+
+          '  },';
+      }
+
+      if (item.descripcion.length > 0){
+        info = info +
+          '  {'+          
           '    "type": "postback",'+
           '    "title": "Más Información",'+
           '    "payload": "'+item.nombre+'"'+
-          '  }]'+
-          '},';
-      }else{        
-        info ='{'+
-          '  "title": "'+item.nombre+'",'+
-          '  "subtitle": "",'+
-          '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+          
-          '    "type": "postback",'+
-          '    "title": "Más Información",'+
-          '    "payload": "'+item.nombre+'"'+
-          '  }]'+
-          '},';
-      }      
+          '  },';
+      }
+      
+      info = info.substr(0, (info.length - 1));
+      info = info +' ]'+
+          ' },';
 
       result = result + info;
 
@@ -364,80 +367,13 @@ function enviarPlantillaGenerica(recipientId, id){
 
     result = result.substr(0, (result.length - 1));
     messageData = messageData.replace('%DATA%', result);
-    
+  
     callSendAPI(JSON.parse(messageData));
 
   });
 
 }
-/*function enviarPlantillaGenerica(recipientId, id){
-  
-  var result = '';
-  console.log("-------------->%s",id);
-  console.log("-------------->");
-  Servicio.find({categoria: id}).exec(function(err, doc){        
 
-    var messageData = '{'+
-    '  "recipient":{'+
-    '    "id": "'+recipientId+'"'+
-    '  },'+
-    '  "message":{'+
-    '    "attachment":{'+
-    '      "type":"template",'+
-    '      "payload":{'+
-    '        "template_type": "generic",'+
-    '        "elements": [%DATA%]'+
-    '      }'+
-    '    }'+
-    '  }'+
-    '}';
-
-    for(var i in doc) {
-
-      var item = doc[i];
-      var info="";
-
-      if (item.url.length > 0){
-        info ='{'+
-          '  "title": "'+item.nombre+'",'+
-          '  "subtitle": "",'+
-          '  "item_url": "'+item.url+'",'+
-          '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+
-          '    "type": "web_url",'+
-          '    "url": "'+item.url+'",'+
-          '    "title": "Visitar Página"'+
-          '  }, {'+
-          '    "type": "phone_number",'+
-          '    "title": "LLamar",'+
-          '    "payload": "+59342169000"'+
-          '  }]'+
-          '},';
-      }else{        
-        info ='{'+
-          '  "title": "'+item.nombre+'",'+
-          '  "subtitle": "",'+
-          '  "image_url": "'+item.url_imagen+'",'+
-          '  "buttons": [{'+          
-          '    "type": "postback",'+
-          '    "title": "Más Información",'+
-          '    "payload": "'+item.nombre+'"'+
-          '  }]'+
-          '},';
-      }      
-
-      result = result + info;
-
-    }
-
-    result = result.substr(0, (result.length - 1));
-    messageData = messageData.replace('%DATA%', result);
-    
-    callSendAPI(JSON.parse(messageData));
-
-  });
-
-}*/
 
 /******************************** Respuestas Rapidas ********************************/
 function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
@@ -465,8 +401,7 @@ function enviarRespuestasRapidas(recipientId, text, id, intento, setTime){
         callSendAPI(JSON.parse(messageData));
         
     }else{
-
-      //Categoria.find({id_categoria: id}).exec(function(err, doc){
+      
       Categoria.find({id_categoria: id}, function(err, doc) {
       
         var messageData = '{"recipient":{"id": "'+recipientId+'"}, "message": { "text": "'+text+'", "quick_replies": [%DATA%] }}';    
@@ -508,11 +443,9 @@ function callSendAPI(messageData) {
     if (!error && response.statusCode == 200) {
       var recipientId = body.recipient_id;
       var messageId = body.message_id;
-
       console.log("Mensaje enviado exitosamente con Id: %s al Id Pagina: %s", messageId, recipientId);
     } else {
-      console.error("Error al enviar el mensaje");
-      console.error(response);
+      console.error("Error al enviar el mensaje");      
       console.error(error);
     }
   }); 
@@ -545,13 +478,4 @@ function greetUserText(userId, callback) {
     }
 
   });
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
 }
