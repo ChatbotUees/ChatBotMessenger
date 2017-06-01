@@ -447,6 +447,7 @@ function callSendAPI(messageData) {
     } else {
       console.error("Error al enviar el mensaje");      
       console.error(error);
+      console.error(response);
     }
   }); 
   
