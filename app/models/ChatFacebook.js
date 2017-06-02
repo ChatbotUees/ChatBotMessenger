@@ -122,7 +122,13 @@ function respuestasChat(message, senderID){
                   enviarVideo(senderID, contenido);                  
                   break;
                 case "plantilla_boton":
-                  enviarPlantillaBoton(senderID, contenido, detalle);                  
+                  if (intento == 'preguntame'){
+                    enviarPlantillaBoton2(senderID, contenido, 1);
+                    enviarPlantillaBoton2(senderID, ".", 2);
+                  }else{
+                    enviarPlantillaBoton(senderID, contenido, detalle);  
+                  }
+                  
                   break;
                 case "plantilla_generica":
                   enviarPlantillaGenerica(senderID, detalle);                  
@@ -262,6 +268,47 @@ function enviarPlantillaBoton(recipientId, text, id) {
   var result = '';
 
   Categoria.find({id_categoria: id}).exec(function(err, doc){
+    
+    var messageData = '{'+
+      '"recipient":{'+
+        '"id": "'+recipientId+'"'+
+      '},'+
+      '"message":{'+
+        '"attachment":{'+
+          '"type": "template",'+
+          '"payload":{'+
+            '"template_type":"button",'+
+            '"text":"'+text+'",'+
+            '"buttons":[%DATA%]'+
+          '}'+
+        '}'+
+      '}'+
+    '}';
+
+    for(var i in doc) {    
+      var item = doc[i];
+      var info = '{'+
+        '"type": "postback", '+
+        '"title":"' + item.nombre + '", '+
+        '"payload":"' + item.nombre +'"'+
+      '},';
+      result = result + info;      
+    }
+
+    result = result.substr(0, (result.length - 1));
+    messageData = messageData.replace('%DATA%', result);
+    
+    callSendAPI(JSON.parse(messageData));
+
+  });
+  
+}
+
+function enviarPlantillaBoton2(recipientId, text, id) {
+
+  var result = '';
+
+  Categoria.find({tmp: id}).exec(function(err, doc){
     
     var messageData = '{'+
       '"recipient":{'+
