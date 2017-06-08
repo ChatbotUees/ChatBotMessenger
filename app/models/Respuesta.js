@@ -7,7 +7,7 @@ let RespuestaSchema = new Schema({
     contenido: String,
     intento: String,
     elemento: String,
-    detalle: Schema.ObjectId,
+    detalle: [Schema.ObjectId], 
     setTimeout: Number
 });
 
