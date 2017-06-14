@@ -89,6 +89,12 @@ function recibirPostback(event) {
 
 function respuestasChat(message, senderID){
 
+	var elemento;
+	var contenido;
+	var detalle;
+	var intento;
+	var setTime;
+
   agente.agenteApiAI(message, senderID, function(intent, speech) {
 
     Respuesta.find({ intento: intent }, function(err, respuesta) {
@@ -99,11 +105,11 @@ function respuestasChat(message, senderID){
           
           for (var i in respuesta) {          
               
-              var elemento = respuesta[i].elemento;
-              var contenido = respuesta[i].contenido;
-              var detalle = respuesta[i].detalle;
-              var intento = respuesta[i].intento;
-              var setTime = respuesta[i].setTimeout;
+              elemento = respuesta[i].elemento;
+              contenido = respuesta[i].contenido;
+              detalle = respuesta[i].detalle;
+              intento = respuesta[i].intento;
+              setTime = respuesta[i].setTimeout;
 
               switch(elemento){
                 case "mensaje_texto":
@@ -148,6 +154,10 @@ function respuestasChat(message, senderID){
                   break;
               }            
 
+          }
+
+          if(elemento == "mensaje_texto" || elemento == "imagen"){
+          	enviarRespuestasRapidas(senderID, "Le puedo ayudar en algo más?", "", "despedida", 1000);
           }
 
         }else{
