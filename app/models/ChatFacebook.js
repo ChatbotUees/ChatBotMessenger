@@ -156,7 +156,7 @@ function respuestasChat(message, senderID){
 
           }
 
-          if(elemento == "mensaje_texto" || elemento == "imagen" || intento <> "despedida"){
+          if(elemento == "mensaje_texto" || elemento == "imagen" || intento != "despedida"){
           	enviarRespuestasRapidas(senderID, "¿Le puedo ayudar en algo más?", "", "despedida", 2000);
           }
 
