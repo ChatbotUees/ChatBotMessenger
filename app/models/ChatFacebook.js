@@ -162,7 +162,7 @@ function respuestasChat(message, senderID){
 
         }else{
           enviarMensajeTexto(senderID, speech);
-          enviarRespuestasRapidas(senderID, "Te puedo ayudar con los siguientes servicios:", "5938d414e23a874ef0a3b3b5", "", 1000);
+          enviarRespuestasRapidas(senderID, "te puedo ayudar con los siguientes servicios:", "5938d414e23a874ef0a3b3b5", "", 1000);
         }      
 
     }).sort({ _id: -1 });
